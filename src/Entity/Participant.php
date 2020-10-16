@@ -31,4 +31,24 @@ class Participant
     {
         return $this->id;
     }
+
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setConversation(Conversation $conversation)
+    {
+        $this->conversation = $conversation;
+    }
+
+    public function getConversation(): Conversation
+    {
+        return $this->conversation;
+    }
 }

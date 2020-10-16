@@ -19,6 +19,30 @@ class ConversationRepository extends ServiceEntityRepository
         parent::__construct($registry, Conversation::class);
     }
 
+    public function findConversationByParticipants(int $otherUserId, int $myUserId)
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->select($queryBuilder->expr()->count('p.conversation'))
+                     ->innerJoin('c.participants', 'p')
+                     ->where(
+                        $queryBuilder->expr()->eq('p.user', ':me'),
+                        $queryBuilder->expr()->eq('p.user', ':otherUser')
+                     )
+                     ->groupBy('p.conversation')
+                     ->having(
+                        $queryBuilder->expr()->eq(
+                            $queryBuilder->expr()->count('p.conversation'), 2
+                        )
+                     )
+                     ->setParameters([
+                        'me' => $myUserId,
+                        'otherUser' => $otherUserId
+                    ])
+        ;
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     // /**
     //  * @return Conversation[] Returns an array of Conversation objects
     //  */
